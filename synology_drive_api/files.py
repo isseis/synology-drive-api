@@ -34,6 +34,25 @@ class FilesMixin:
 
         return {folder_info['name']: folder_info['file_id'] for folder_info in resp['data']['items']}
 
+    def shared_with_me(self):
+        """
+        get shared folder info
+        :return:
+        """
+        api_name = 'SYNO.SynologyDrive.Files'
+        endpoint = 'entry.cgi'
+        params = {'api': api_name, 'version': 2, 'method': 'shared_with_me', 'filter': {}, 'sort_direction': 'asc',
+                  'sort_by': 'name', 'offset': 0, 'limit': 1000}
+        resp = self.session.http_get(endpoint, params=params)
+
+        if not resp['success']:
+            raise Exception('Get shared_with_me info failed.')
+
+        if resp['data']['total'] == 0:
+            return {}
+
+        return resp['data']['items']
+
     def share_file(self, share_path: str):
         """
         TODO share file more detail params
